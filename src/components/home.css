@@ -1,0 +1,97 @@
+.home{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.home >h1{
+    font-size: 3rem;
+    margin-top: 2rem;
+}
+
+.home_head{
+    margin-bottom: 2rem;
+    margin-top: 2rem;
+    font-size: 3rem;
+}
+
+.home_card{
+    padding: 2rem;
+    width: 55%;
+    border-radius: 1rem;
+    min-width: 30rem;
+    background-color:  rgb(194, 194, 194);
+    display: flex;
+    flex-direction: column;
+}
+
+.home_card input, textarea{
+    padding: 8px 1rem;
+    margin: 1rem 0;
+}
+
+textarea{
+    resize: none;
+}
+
+.home_card button{
+    background-color: rgb(27, 27, 27);
+    color: white;
+    padding: 1rem 0;
+    font-size: 1.8rem;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+.blog_list{
+    margin-bottom: 5rem;
+    margin-top: 2rem;
+}
+
+.blog_list > h1{
+    text-align: center;
+    font-size: 2.2rem;
+}
+
+.blog_list > p{
+    text-align: center;
+    font-size: 2rem;
+}
+
+.blog{
+    display: flex;
+    background-color: rgb(159, 159, 159);
+    flex-direction: column;
+    padding: 1rem 2rem;
+    align-items: center;
+}
+
+.blog:not(:first-child){
+    margin-top: 4rem;
+}
+
+.blog h1{
+    font-size: 2.2rem;
+}
+
+.blog > p{
+    font-size: 1.5rem;
+    margin-top: 5px;
+}
+
+.blog p:last-of-type{
+    margin: 2rem 0;
+}
+
+.blog_btns{
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+}
+
+.blog_btns button{
+    width: 15rem;
+    background-color: var(--secondary);
+}
