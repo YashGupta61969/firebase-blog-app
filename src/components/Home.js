@@ -1,51 +1,77 @@
 import React, { useEffect, useState } from 'react'
-import { set, ref, onValue } from 'firebase/database';
 import Navbar from './Navbar'
 import './home.css'
-import { auth, db } from '../firebase';
+import { auth, db} from '../firebase';
 import { uid } from 'uid';
-import { Navigate, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import {onValue, ref, remove,update,  set} from 'firebase/database'
 
 function Home() {
   const [name, setName] = useState('');
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [blogs, setBlogs] = useState([])
+  const [isEdit, setIsEdit] = useState(false)
+  const [tempId, setTempId] = useState('')
   const navigate = useNavigate()
-  
+
   useEffect(()=>{
+    onValue(ref(db), snapshot=>{
+      const data = snapshot.val()
+      if(data !== null){
+      setBlogs(Object.values(data))  
+      }
+    })
+
     auth.onAuthStateChanged(user=>{
-      if(user){
-        onValue(ref(db, `/${auth.currentUser.uid}`), snapshot=>{
-          setBlogs([]);
-          const data = snapshot.val()
-          if(data !== null){
-            Object.values(data).map(bl=>{
-              setBlogs(prev=>[...prev, bl.blogs])
-              console.log(bl)
-            })
-          }
-        })
-      }else if(!user){
+      if(!user){
         navigate('/login')
       }
     })
-    // setBlogs()
+    // eslint-disable-next-line
   },[])
-  
-  const createBlog = () => {
-    // e.preventDefault()
-    const uidd = uid();
-    const date = new Date().toLocaleDateString();
+    
+    const createBlog = ()=>{
+      const uidd = uid()
+        const date = new Date().toLocaleDateString();
+      set(ref(db,`/${uidd}`),{
+        name, 
+        title, 
+        description, 
+        date,
+        uidd
+      })
 
-    setBlogs(prev=>[...prev, {name, title, description, date}])
-
-    set(ref(db, `/${auth.currentUser.uid}/${uidd}`),{
-      blogs, 
-      uid:uidd
-    })
+      setName('')
+      setDescription('')
+      setTitle('')
+    }
+    
+    
+    const deleteBlog = id =>{
+    remove(ref(db, `/${id}`))
   }
 
+  const handleUpdate = (blog)=>{
+    setIsEdit(true);
+    setTempId(blog.uidd)
+    setDescription(blog.description)
+    setName(blog.name)
+    setTitle(blog.title)
+  }
+
+  const submitChange = ()=>{
+    update(ref(db, `/${tempId}`),{
+      name,
+      title,
+      description,
+      date:new Date().toLocaleDateString(),
+      uidd:tempId
+    });
+    setDescription('')
+    setName('')
+    setTitle('')
+  }
 
   return (
     <div className='home'>
@@ -56,13 +82,13 @@ function Home() {
 
       <div className="home_card">
 
-        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='Enter Your Name' required />
-
         <input type="text" value={title} onChange={(e) => setTitle(e.target.value)} placeholder='Enter Blog title' required />
+
+        <input type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder='Enter Your Name' required />
 
         <textarea cols="30" rows="10" value={description} onChange={(e) => setDescription(e.target.value)} placeholder='Enter Your Blog Description' required></textarea>
 
-        <button onClick={createBlog}>Add Blog</button>
+       {isEdit ?<button onClick={submitChange}>Update Blog</button> : <button onClick={createBlog}>Add Blog</button>}
 
       </div>
 
@@ -76,8 +102,8 @@ function Home() {
             <p>Added On : {blog.date}</p>
             <p>{blog.description}</p>
             <div className="blog_btns">
-              <button>Edit</button>
-              <button>Delete</button>
+              <button onClick={()=>{handleUpdate(blog)}}>Update</button>
+              <button onClick={()=>deleteBlog(blog.uidd)}>Delete</button>
             </div>
           </div>
         )) : <p>No Blogs Found</p>}

@@ -92,6 +92,10 @@ textarea{
 }
 
 .blog_btns button{
-    width: 15rem;
+    width: 20rem;
     background-color: var(--secondary);
 }
+
+/* .blog_btns:first-child{
+    margin-right: 2rem;
+} */
